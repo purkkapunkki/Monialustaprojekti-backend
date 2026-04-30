@@ -46,13 +46,18 @@ const BASE_MEDIA_QUERY = `
 `;
 
 const fetchAllMedia = async (
+  communityId: number,
   page: number | undefined = undefined,
   limit: number | undefined = undefined,
 ): Promise<MediaItem[]> => {
   const offset = ((page || 1) - 1) * (limit || 10);
-  const sql = `${BASE_MEDIA_QUERY} ORDER BY media_id DESC
+  const sql = `${BASE_MEDIA_QUERY}
+    WHERE MediaItems.community_id = ?
+    ORDER BY media_id DESC
     ${limit ? 'LIMIT ? OFFSET ?' : ''}`;
-  const params = limit ? [uploadPath, limit, offset] : [uploadPath];
+  const params = limit
+    ? [uploadPath, communityId, limit, offset]
+    : [uploadPath, communityId];
   const stmt = promisePool.format(sql, params);
 
   const [rows] = await promisePool.execute<RowDataPacket[] & MediaItem[]>(stmt);
@@ -77,10 +82,26 @@ const postMedia = async (
     'media_id' | 'created_at' | 'thumbnail' | 'screenshots'
   >,
 ): Promise<MediaItem> => {
-  const {user_id, filename, filesize, media_type, title, description} = media;
-  const sql = `INSERT INTO MediaItems (user_id, filename, filesize, media_type, title, description)
-               VALUES (?, ?, ?, ?, ?, ?)`;
-  const params = [user_id, filename, filesize, media_type, title, description];
+  const {
+    user_id,
+    filename,
+    filesize,
+    media_type,
+    title,
+    description,
+    community_id,
+  } = media;
+  const sql = `INSERT INTO MediaItems (user_id, filename, filesize, media_type, title, description, community_id)
+               VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const params = [
+    user_id,
+    filename,
+    filesize,
+    media_type,
+    title,
+    description,
+    community_id,
+  ];
   const stmt = promisePool.format(sql, params);
   const [result] = await promisePool.execute<ResultSetHeader>(stmt);
   if (result.affectedRows === 0) {

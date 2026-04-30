@@ -1,16 +1,32 @@
 import {ResultSetHeader, RowDataPacket} from 'mysql2';
 import {promisePool} from '../../lib/db';
-import {UserWithLevel, User, UserWithNoPassword} from 'hybrid-types/DBTypes';
+import {
+  UserWithLevel,
+  User,
+  UserWithNoPassword,
+  UserWithNoPasswordAndCommunity,
+  UserWithLevelAndCommunity,
+} from 'hybrid-types/DBTypes';
 import {UserDeleteResponse} from 'hybrid-types/MessageTypes';
 import CustomError from '../../classes/CustomError';
 
-const getUserById = async (id: number): Promise<UserWithNoPassword> => {
+const getUserById = async (
+  id: number,
+): Promise<UserWithNoPasswordAndCommunity> => {
   const [rows] = await promisePool.execute<
-    RowDataPacket[] & UserWithNoPassword[]
+    RowDataPacket[] & UserWithNoPasswordAndCommunity[]
   >(
-    `SELECT Users.user_id, Users.username, Users.email, Users.created_at, UserLevels.level_name
+    `SELECT
+         Users.user_id,
+         Users.username,
+         Users.email,
+         Users.community_id,
+         Users.created_at,
+         UserLevels.level_name,
+         Communities.community_name
      FROM Users
      JOIN UserLevels ON Users.user_level_id = UserLevels.level_id
+     JOIN Communities ON Users.community_id = Communities.community_id
      WHERE Users.user_id = ?`,
     [id],
   );
@@ -45,11 +61,16 @@ const getUserByEmail = async (email: string): Promise<UserWithLevel> => {
   return rows[0];
 };
 
-const getUserByUsername = async (username: string): Promise<UserWithLevel> => {
-  const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
-    `SELECT Users.user_id, Users.username, Users.password, Users.email, Users.created_at, UserLevels.level_name
+const getUserByUsername = async (
+  username: string,
+): Promise<UserWithLevelAndCommunity> => {
+  const [rows] = await promisePool.execute<
+    RowDataPacket[] & UserWithLevelAndCommunity[]
+  >(
+    `SELECT Users.user_id, Users.username, Users.password, Users.email, Users.community_id, Users.created_at, UserLevels.level_name, Communities.community_name
      FROM Users
      JOIN UserLevels ON Users.user_level_id = UserLevels.level_id
+     JOIN Communities ON Users.community_id = Communities.community_id
      WHERE Users.username = ?`,
     [username],
   );
@@ -63,13 +84,15 @@ const createUser = async (
   user: Pick<User, 'username' | 'password' | 'email'>,
   userLevelId = 2,
 ): Promise<UserWithNoPassword> => {
-  const sql = `INSERT INTO Users (username, password, email, user_level_id)
-       VALUES (?, ?, ?, ?)`;
+  const sql = `INSERT INTO Users (username, password, email, user_level_id, community_id)
+       VALUES (?, ?, ?, ?, ?)`;
   const stmt = promisePool.format(sql, [
     user.username,
     user.password,
     user.email,
     userLevelId,
+    // TODO: set this to the admin user's community_id
+    1,
   ]);
   const [result] = await promisePool.execute<ResultSetHeader>(stmt);
 

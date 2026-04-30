@@ -1,6 +1,6 @@
 type UserLevel = {
   level_id: number;
-  level_name: 'Admin' | 'User' | 'Guest';
+  level_name: "Admin" | "User" | "Guest";
 };
 
 type User = {
@@ -9,6 +9,7 @@ type User = {
   password: string;
   email: string;
   user_level_id: number;
+  community_id: number;
   created_at: Date | string;
 };
 
@@ -21,6 +22,7 @@ type MediaItem = {
   media_type: string;
   title: string;
   description: string | null;
+  community_id: number;
   created_at: Date | string;
   screenshots: string[] | null;
 };
@@ -51,6 +53,7 @@ type Rating = {
 type Tag = {
   tag_id: number;
   tag_name: string;
+  community_id: number;
 };
 
 type MediaItemTag = {
@@ -69,27 +72,36 @@ type UploadResult = {
 
 type MostLikedMedia = Pick<
   MediaItem,
-  | 'media_id'
-  | 'filename'
-  | 'filesize'
-  | 'media_type'
-  | 'title'
-  | 'description'
-  | 'created_at'
+  | "media_id"
+  | "filename"
+  | "filesize"
+  | "media_type"
+  | "title"
+  | "description"
+  | "created_at"
 > &
-  Pick<User, 'user_id' | 'username' | 'email' | 'created_at'> & {
+  Pick<User, "user_id" | "username" | "email" | "created_at"> & {
     likes_count: bigint;
   };
 
 // type gymnastics to get rid of user_level_id from User type and replace it with level_name from UserLevel type
-type UserWithLevel = Omit<User, 'user_level_id'> &
-  Pick<UserLevel, 'level_name'>;
+type UserWithLevel = Omit<User, "user_level_id"> &
+  Pick<UserLevel, "level_name">;
 
-type UserWithNoPassword = Omit<UserWithLevel, 'password'>;
+type UserWithNoPassword = Omit<UserWithLevel, "password">;
 
-type TokenContent = Pick<User, 'user_id'> & Pick<UserLevel, 'level_name'>;
+type UserWithNoPasswordAndCommunity = UserWithNoPassword & UserWithCommunity;
 
-type MediaItemWithOwner = MediaItem & Pick<User, 'username'>;
+type UserWithCommunity = {
+  community_name: string;
+};
+
+type UserWithLevelAndCommunity = UserWithLevel & UserWithCommunity;
+
+type TokenContent = Pick<User, "user_id" | "community_id"> &
+  Pick<UserLevel, "level_name">;
+
+type MediaItemWithOwner = MediaItem & Pick<User, "username">;
 
 // for upload server
 type FileInfo = {
@@ -111,6 +123,9 @@ export type {
   MostLikedMedia,
   UserWithLevel,
   UserWithNoPassword,
+  UserWithNoPasswordAndCommunity,
+  UserWithCommunity,
+  UserWithLevelAndCommunity,
   TokenContent,
   MediaItemWithOwner,
   FileInfo,

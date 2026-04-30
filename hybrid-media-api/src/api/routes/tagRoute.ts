@@ -15,7 +15,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(tagListGet)
+  .get(authenticate, tagListGet)
   .post(
     authenticate,
     body('tag_name')

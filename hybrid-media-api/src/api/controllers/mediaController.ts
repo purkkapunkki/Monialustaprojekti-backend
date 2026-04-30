@@ -20,7 +20,8 @@ const mediaListGet = async (
 ) => {
   try {
     const {page, limit} = req.query;
-    const media = await fetchAllMedia(Number(page), Number(limit));
+    const communityId = res.locals.user.community_id;
+    const media = await fetchAllMedia(communityId, Number(page), Number(limit));
     res.json(media);
   } catch (error) {
     next(error);
@@ -49,6 +50,7 @@ const mediaPost = async (
   try {
     // add user_id to media object from token
     req.body.user_id = res.locals.user.user_id;
+    req.body.community_id = res.locals.user.community_id;
     const mediaItem = await postMedia(req.body);
     res.json({message: 'Media created', media: mediaItem});
   } catch (error) {

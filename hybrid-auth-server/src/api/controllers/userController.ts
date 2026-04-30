@@ -17,7 +17,12 @@ import {
   getUserByUsername,
   modifyUser,
 } from '../models/userModel';
-import {TokenContent, User, UserWithNoPassword} from 'hybrid-types/DBTypes';
+import {
+  TokenContent,
+  User,
+  UserWithNoPassword,
+  UserWithNoPasswordAndCommunity,
+} from 'hybrid-types/DBTypes';
 
 const salt = bcrypt.genSaltSync(12);
 
@@ -36,7 +41,7 @@ const userListGet = async (
 
 const userGet = async (
   req: Request<{id: string}>,
-  res: Response<UserWithNoPassword>,
+  res: Response<UserWithNoPasswordAndCommunity>,
   next: NextFunction,
 ) => {
   try {

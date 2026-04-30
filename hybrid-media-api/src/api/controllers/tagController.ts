@@ -19,7 +19,8 @@ const tagListGet = async (
   next: NextFunction,
 ) => {
   try {
-    const tags = await fetchAllTags();
+    const communityId = res.locals.user.community_id;
+    const tags = await fetchAllTags(communityId);
     res.json(tags);
   } catch (error) {
     next(error);
@@ -45,7 +46,12 @@ const tagPost = async (
   next: NextFunction,
 ) => {
   try {
-    const result = await postTag(req.body.tag_name, Number(req.body.media_id));
+    const communityId = res.locals.user.community_id;
+    const result = await postTag(
+      req.body.tag_name,
+      Number(req.body.media_id),
+      communityId,
+    );
     res.json(result);
   } catch (error) {
     next(error);

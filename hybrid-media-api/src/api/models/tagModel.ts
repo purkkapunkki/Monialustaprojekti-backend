@@ -37,9 +37,10 @@ const BASE_MEDIA_QUERY = `
 `;
 
 // Request a list of tags
-const fetchAllTags = async (): Promise<Tag[]> => {
+const fetchAllTags = async (community_id: number): Promise<Tag[]> => {
   const [rows] = await promisePool.execute<RowDataPacket[] & Tag[]>(
-    'SELECT * FROM Tags',
+    'SELECT * FROM Tags WHERE community_id = ?',
+    [community_id],
   );
   return rows;
 };
@@ -76,19 +77,20 @@ const fetchMediaByTagName = async (tag_name: string): Promise<MediaItem[]> => {
 const postTag = async (
   tag_name: string,
   media_id: number,
+  community_id: number,
 ): Promise<MessageResponse> => {
   let tag_id = 0;
   // check if tag exists (case insensitive)
   const [tagResult] = await promisePool.query<RowDataPacket[] & Tag[]>(
-    'SELECT tag_id FROM Tags WHERE tag_name = ?',
-    [tag_name],
+    'SELECT tag_id FROM Tags WHERE tag_name = ? AND community_id = ?',
+    [tag_name, community_id],
   );
 
   if (tagResult.length === 0) {
     // if tag does not exist create it
     const [insertResult] = await promisePool.execute<ResultSetHeader>(
-      'INSERT INTO Tags (tag_name) VALUES (?)',
-      [tag_name],
+      'INSERT INTO Tags (tag_name, community_id) VALUES (?, ?)',
+      [tag_name, community_id],
     );
     tag_id = insertResult.insertId;
   } else {

@@ -4,7 +4,11 @@ import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import {LoginResponse} from 'hybrid-types/MessageTypes';
 import {getUserByUsername} from '../models/userModel';
-import {UserWithLevel, TokenContent} from 'hybrid-types/DBTypes';
+import {
+  UserWithLevel,
+  TokenContent,
+  UserWithCommunity,
+} from 'hybrid-types/DBTypes';
 
 const login = async (
   req: Request<{}, {}, {username: string; password: string}>,
@@ -25,17 +29,20 @@ const login = async (
       return;
     }
 
-    const outUser: Omit<UserWithLevel, 'password'> = {
+    const outUser: Omit<UserWithLevel, 'password'> & UserWithCommunity = {
       user_id: user.user_id,
       username: user.username,
       email: user.email,
       created_at: user.created_at,
       level_name: user.level_name,
+      community_id: user.community_id,
+      community_name: user.community_name,
     };
 
     const tokenContent: TokenContent = {
       user_id: user.user_id,
       level_name: user.level_name,
+      community_id: user.community_id,
     };
 
     const token = jwt.sign(tokenContent, process.env.JWT_SECRET);
