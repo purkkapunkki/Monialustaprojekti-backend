@@ -1,7 +1,7 @@
 -- Drop the database if it exists and then create it
-DROP DATABASE IF EXISTS retrofit_site;
-CREATE DATABASE retrofit_site;
-USE retrofit_site;
+DROP DATABASE IF EXISTS kirva;
+CREATE DATABASE kirva;
+USE kirva;
 
 -- Create the tables
 
