@@ -83,7 +83,7 @@ const getUserByUsername = async (
 const createUser = async (
   user: Pick<User, 'username' | 'password' | 'email'>,
   userLevelId = 2,
-): Promise<UserWithNoPassword> => {
+): Promise<UserWithNoPasswordAndCommunity> => {
   const sql = `INSERT INTO Users (username, password, email, user_level_id, community_id)
        VALUES (?, ?, ?, ?, ?)`;
   const stmt = promisePool.format(sql, [
@@ -106,7 +106,7 @@ const createUser = async (
 const modifyUser = async (
   user: Partial<User>,
   id: number,
-): Promise<UserWithNoPassword> => {
+): Promise<UserWithNoPasswordAndCommunity> => {
   const connection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();
