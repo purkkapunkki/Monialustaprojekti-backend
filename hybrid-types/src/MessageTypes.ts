@@ -16,7 +16,7 @@ type LoginResponse = MessageResponse & {
 };
 
 type UserResponse = MessageResponse & {
-  user: UserWithNoPassword;
+  user: UserWithNoPassword & UserWithCommunity;
 };
 
 type UserDeleteResponse = MessageResponse & {
