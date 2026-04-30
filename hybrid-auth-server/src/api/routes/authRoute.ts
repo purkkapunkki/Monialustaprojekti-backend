@@ -3,15 +3,11 @@ import {login} from '../controllers/authController';
 const router = express.Router();
 import {body} from 'express-validator';
 import {validationErrors} from '../../middlewares';
+import {usernameValidator} from '../../lib/validators';
 
 router.post(
   '/login',
-  body('username')
-    .isString()
-    .trim()
-    .escape()
-    .isLength({min: 3, max: 50})
-    .withMessage('Username must be between 3-50 characters'),
+  usernameValidator(body('username')),
   body('password')
     .isString()
     .isLength({min: 5})

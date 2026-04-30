@@ -12,6 +12,7 @@ import {
   userPutAsAdmin,
 } from '../controllers/userController';
 import {authenticate, validationErrors} from '../../middlewares';
+import {usernameValidator} from '../../lib/validators';
 import {body, param} from 'express-validator';
 
 const router = express.Router();
@@ -20,15 +21,7 @@ router.get('/', userListGet);
 
 router.post(
   '/',
-  body('username')
-    .trim()
-    .escape()
-    .isLength({min: 3, max: 50})
-    .withMessage('Username must be between 3-50 characters')
-    .matches(/^[a-zA-Z0-9_-]+$/)
-    .withMessage(
-      'Username can only contain letters, numbers, underscores and dashes',
-    ),
+  usernameValidator(body('username')),
   body('password')
     .isString()
     .isLength({min: 5})
@@ -45,16 +38,7 @@ router.post(
 router.put(
   '/',
   authenticate,
-  body('username')
-    .optional()
-    .trim()
-    .escape()
-    .isLength({min: 3, max: 50})
-    .withMessage('Username must be between 3-50 characters')
-    .matches(/^[a-zA-Z0-9_-]+$/)
-    .withMessage(
-      'Username can only contain letters, numbers, underscores and dashes',
-    ),
+  usernameValidator(body('username'), true),
   body('password')
     .optional()
     .isString()
@@ -76,33 +60,26 @@ router.get('/token', authenticate, checkToken);
 
 router.route('/:id').get(param('id').isNumeric(), validationErrors, userGet);
 
-router.route('/:id').put(
-  authenticate,
-  param('id').isNumeric(),
-  body('username')
-    .optional()
-    .trim()
-    .escape()
-    .isLength({min: 3, max: 50})
-    .withMessage('Username must be between 3-50 characters')
-    .matches(/^[a-zA-Z0-9_-]+$/)
-    .withMessage(
-      'Username can only contain letters, numbers, underscores and dashes',
-    ),
-  body('password')
-    .optional()
-    .isString()
-    .isLength({min: 5})
-    .withMessage('Password must be at least 5 characters long'),
-  body('email')
-    .optional()
-    .trim()
-    .normalizeEmail()
-    .isEmail()
-    .withMessage('Invalid email format'),
-  validationErrors,
-  userPutAsAdmin,
-);
+router
+  .route('/:id')
+  .put(
+    authenticate,
+    param('id').isNumeric(),
+    usernameValidator(body('username'), true),
+    body('password')
+      .optional()
+      .isString()
+      .isLength({min: 5})
+      .withMessage('Password must be at least 5 characters long'),
+    body('email')
+      .optional()
+      .trim()
+      .normalizeEmail()
+      .isEmail()
+      .withMessage('Invalid email format'),
+    validationErrors,
+    userPutAsAdmin,
+  );
 
 router
   .route('/:id')
@@ -126,15 +103,7 @@ router.get(
 
 router.get(
   '/username/:username',
-  param('username')
-    .trim()
-    .escape()
-    .isLength({min: 3, max: 50})
-    .withMessage('Username must be between 3-50 characters')
-    .matches(/^[a-zA-Z0-9_-]+$/)
-    .withMessage(
-      'Username can only contain letters, numbers, underscores and dashes',
-    ),
+  usernameValidator(param('username')),
   validationErrors,
   checkUsernameExists,
 );
