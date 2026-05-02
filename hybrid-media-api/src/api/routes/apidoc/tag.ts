@@ -26,8 +26,8 @@
  *
  * @apiHeader {String} Authorization Bearer token for authentication
  *
- * @apiParam {String} tag_name Name of the tag (2-50 characters)
- * @apiParam {Number} media_id ID of the media to tag (min: 1)
+ * @apiBody {String} tag_name Name of the tag (2-50 characters)
+ * @apiBody {Number} media_id ID of the media to tag (min: 1)
  *
  * @apiSuccess {String} message Success message
  *
@@ -80,7 +80,7 @@
  * @apiHeader {String} Authorization Bearer token for authentication
  *
  * @apiParam {Number} media_id Media's ID (min: 1)
- * @apiParam {Number} tag_name Tag's name
+ * @apiParam {String} tag_name Tag's name
  *
  * @apiSuccess {String} message Success message
  *

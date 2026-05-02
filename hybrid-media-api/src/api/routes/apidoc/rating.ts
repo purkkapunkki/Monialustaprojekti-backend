@@ -141,8 +141,8 @@
  *
  * @apiHeader {String} Authorization Bearer token for authentication
  *
- * @apiParam {Number} rating_value Rating value (1-5)
- * @apiParam {Number} media_id Media's unique ID
+ * @apiBody {Number} rating_value Rating value (1-5)
+ * @apiBody {Number} media_id Media's unique ID
  *
  * @apiSuccess {String} message Success message
  *

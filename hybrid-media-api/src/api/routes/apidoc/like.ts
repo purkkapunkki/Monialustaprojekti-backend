@@ -36,7 +36,7 @@
  *
  * @apiHeader {String} Authorization Bearer token for authentication
  *
- * @apiParam {Number} media_id ID of the media to like (min: 1)
+ * @apiBody {Number} media_id ID of the media to like (min: 1)
  *
  * @apiSuccess {String} message Success message
  *

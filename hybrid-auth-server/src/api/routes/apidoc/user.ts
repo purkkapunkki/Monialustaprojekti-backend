@@ -35,9 +35,9 @@
  * @apiName CreateUser
  * @apiGroup User
  *
- * @apiParam (Request body) {String} username Username of the User.
- * @apiParam (Request body) {String} password Password of the User.
- * @apiParam (Request body) {String} email Email of the User.
+ * @apiBody {String} username Username of the User.
+ * @apiBody {String} password Password of the User.
+ * @apiBody {String} email Email of the User.
  *
  * @apiSuccess {String} message Success message.
  * @apiSuccess {Object} user User's information.
@@ -69,10 +69,10 @@
  *
  * @apiHeader {String} Authorization Users unique access-token (Bearer Token).
  *
- * @apiParam (Request body) {Object} user User's information.
- * @apiParam (Request body) {String} [user.username] Username of the User.
- * @apiParam (Request body) {String} [user.password] Password of the User.
- * @apiParam (Request body) {String} [user.email] Email of the User.
+ * @apiBody {Object} user User's information.
+ * @apiBody {String} [user.username] Username of the User.
+ * @apiBody {String} [user.password] Password of the User.
+ * @apiBody {String} [user.email] Email of the User.
  *
  * @apiParamExample {json} Request-Example:
  *     {
@@ -186,10 +186,10 @@
  *
  * @apiParam {Number} id User's unique ID.
  *
- * @apiParam (Request body) {Object} user User's information.
- * @apiParam (Request body) {String} [user.username] Username of the User.
- * @apiParam (Request body) {String} [user.password] Password of the User.
- * @apiParam (Request body) {String} [user.email] Email of the User.
+ * @apiBody {Object} user User's information.
+ * @apiBody {String} [user.username] Username of the User.
+ * @apiBody {String} [user.password] Password of the User.
+ * @apiBody {String} [user.email] Email of the User.
  *
  * @apiParamExample {json} Request-Example:
  *     {

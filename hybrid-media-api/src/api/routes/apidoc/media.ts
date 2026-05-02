@@ -53,11 +53,11 @@
  *
  * @apiHeader {String} Authorization Bearer token for authentication
  *
- * @apiParam {String} title Title of the media (3-128 characters)
- * @apiParam {String} description Description of the media (max 1000 characters)
- * @apiParam {String} filename Filename of the media (alphanumeric, dots and hyphens only)
- * @apiParam {String} media_type Valid MIME type of the media
- * @apiParam {Number} filesize Size of the media file (min: 1)
+ * @apiBody {String} title Title of the media (3-128 characters)
+ * @apiBody {String} description Description of the media (max 1000 characters)
+ * @apiBody {String} filename Filename of the media (alphanumeric, dots and hyphens only)
+ * @apiBody {String} media_type Valid MIME type of the media
+ * @apiBody {Number} filesize Size of the media file (min: 1)
  *
  * @apiSuccess {String} message Success message indicating media creation
  *

@@ -31,8 +31,8 @@
  *
  * @apiHeader {String} Authorization Bearer token for authentication
  *
- * @apiParam {String} comment_text Text of the comment
- * @apiParam {Number} media_id ID of the media
+ * @apiBody {String} comment_text Text of the comment
+ * @apiBody {Number} media_id ID of the media
  *
  * @apiSuccess {String} message Success message
  *
@@ -168,7 +168,7 @@
  * @apiHeader {String} Authorization Bearer token for authentication.
  *
  * @apiParam {Number} id Comment's unique ID.
- * @apiParam {String} comment_text Text of the comment.
+ * @apiBody {String} comment_text Text of the comment.
  *
  * @apiSuccess {String} message Success message
  *
@@ -188,7 +188,7 @@
  *     }
  */
 /**
- * @api {delete} /comments Delete Comment
+ * @api {delete} /comments/:id Delete Comment
  * @apiName DeleteComment
  * @apiGroup Comment
  *
