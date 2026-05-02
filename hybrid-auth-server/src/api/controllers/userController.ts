@@ -75,7 +75,7 @@ const userPost = async (
     };
     res.json(response);
   } catch {
-    next(new CustomError('Duplicate entry', 400));
+    next(new CustomError('Error creating the user', 400));
   }
 };
 
