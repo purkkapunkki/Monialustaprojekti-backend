@@ -63,7 +63,8 @@ const userPost = async (
 
     console.log(user);
 
-    const newUser = await createUser(user);
+    const adminUser = res.locals.user;
+    const newUser = await createUser(user, adminUser.community_id);
     console.log('newUser', newUser);
     if (!newUser) {
       next(new CustomError('User not created', 500));

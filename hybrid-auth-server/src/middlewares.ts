@@ -67,6 +67,14 @@ const authenticate = async (
   }
 };
 
+const adminOnly = (req: Request, res: Response, next: NextFunction) => {
+  if (!res.locals.user || res.locals.user.level_name !== 'Admin') {
+    next(new CustomError('Admin access required', 403));
+    return;
+  }
+  next();
+};
+
 const validationErrors = (req: Request, _res: Response, next: NextFunction) => {
   console.log(req.body);
   const errors = validationResult(req);
@@ -81,4 +89,4 @@ const validationErrors = (req: Request, _res: Response, next: NextFunction) => {
   next();
 };
 
-export {notFound, errorHandler, authenticate, validationErrors};
+export {notFound, errorHandler, authenticate, adminOnly, validationErrors};

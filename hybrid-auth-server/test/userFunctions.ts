@@ -1,21 +1,40 @@
 /* eslint-disable node/no-unpublished-import */
 import {Express} from 'express';
 import request from 'supertest';
-import {UserWithLevel, UserWithLevelAndCommunity} from 'hybrid-types/DBTypes';
+import {
+  UserWithLevel,
+  UserWithLevelAndCommunity,
+  UserWithNoPasswordAndCommunity,
+} from 'hybrid-types/DBTypes';
 import {
   UserResponse,
   LoginResponse,
   MessageResponse,
 } from 'hybrid-types/MessageTypes';
+import {createUserFactory} from './factories/userFactory';
+
+export const createAdminUserDirect = async (
+  overrides: Partial<
+    Pick<UserWithLevel, 'username' | 'email' | 'password'>
+  > = {},
+): Promise<UserWithNoPasswordAndCommunity> => {
+  return await createUserFactory(
+    overrides,
+    1, // Community 1
+    1, // Admin level
+  );
+};
 
 const createUser = (
   url: string | Express,
   path: string,
   user: Pick<UserWithLevel, 'username' | 'email' | 'password'>,
+  token: string,
 ): Promise<UserWithLevelAndCommunity> => {
   return new Promise((resolve, reject) => {
     request(url)
       .post(path)
+      .set('Authorization', `Bearer ${token}`)
       .send(user)
       .expect(200, (err, response) => {
         if (err) {
@@ -134,7 +153,7 @@ const login = (
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBeDefined();
           expect(userData.created_at).toBeDefined();
-          expect(userData.level_name).toBe('User');
+          expect(userData.level_name).toBeDefined();
           resolve(result.token);
         }
       });
@@ -150,10 +169,12 @@ const modifyUser = (
   return new Promise((resolve, reject) => {
     request(url)
       .put(path)
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${token}`)
       .send(user)
       .expect(200, (err, response) => {
         if (err) {
+          console.log('user put failed', response.body);
+
           reject(err);
         } else {
           const result: UserResponse = response.body;
@@ -178,7 +199,7 @@ const deleteUser = (url: string | Express, path: string, token: string) => {
   return new Promise((resolve, reject) => {
     request(url)
       .delete(path)
-      .set('Authorization', token)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200, (err, response) => {
         if (err) {
           reject(err);

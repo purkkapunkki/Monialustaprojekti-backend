@@ -1,8 +1,13 @@
 /* eslint-disable node/no-unpublished-import */
 import app from '../src/app';
-import {UserWithLevel, UserWithLevelAndCommunity} from 'hybrid-types/DBTypes';
+import {
+  UserWithLevel,
+  UserWithLevelAndCommunity,
+  UserWithNoPasswordAndCommunity,
+} from 'hybrid-types/DBTypes';
 import {getFound, getNotFound} from './serverFunctions';
 import {
+  createAdminUserDirect,
   createUser,
   deleteUser,
   getAllUsers,
@@ -13,10 +18,39 @@ import {
 } from './userFunctions';
 import randomstring from 'randomstring';
 
+let adminUser: UserWithNoPasswordAndCommunity;
+let adminToken: string;
 const userpath = '/api/v1/users';
 const loginpath = '/api/v1/auth/login';
 
 describe('GET /api/v1', () => {
+  beforeAll(async () => {
+    adminUser = await createAdminUserDirect({
+      username:
+        'testadmin' +
+        randomstring.generate({
+          length: 7,
+          charset: 'alphabetic',
+        }),
+      email:
+        randomstring.generate({
+          length: 7,
+          charset: 'alphanumeric',
+          capitalization: 'lowercase',
+        }) + '@admintest.com',
+      password: 'adminpassword',
+    });
+    adminToken = await login(app, loginpath, {
+      username: adminUser.username,
+      password: 'adminpassword',
+    });
+  });
+
+  afterAll(async () => {
+    // Clean up: delete the admin user
+    await deleteUser(app, `${userpath}/${adminUser.user_id}`, adminToken);
+  });
+
   // test that server is running
   it('should return 200 OK', async () => {
     await getFound(app, '/');
@@ -47,7 +81,7 @@ describe('GET /api/v1', () => {
   // create a user
   let user: UserWithLevelAndCommunity;
   it('should create a user', async () => {
-    user = await createUser(app, userpath, testuser);
+    user = await createUser(app, userpath, testuser, adminToken);
   });
 
   // test that you get all users
@@ -84,14 +118,12 @@ describe('GET /api/v1', () => {
   };
   it('should modify a user', async () => {
     console.log('Token', token);
-    const bearerToken = `Bearer ${token}`;
-    await modifyUser(app, userpath, bearerToken, modifieduser);
+    await modifyUser(app, userpath, token, modifieduser);
   });
 
   // test delete user
   it('should delete a user', async () => {
-    const bearerToken = `Bearer ${token}`;
-    await deleteUser(app, userpath, bearerToken);
+    await deleteUser(app, userpath, token);
   });
 
   // test that the user is deleted

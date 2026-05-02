@@ -11,7 +11,7 @@ import {
   userPut,
   userPutAsAdmin,
 } from '../controllers/userController';
-import {authenticate, validationErrors} from '../../middlewares';
+import {authenticate, adminOnly, validationErrors} from '../../middlewares';
 import {usernameValidator} from '../../lib/validators';
 import {body, param} from 'express-validator';
 
@@ -21,6 +21,8 @@ router.get('/', userListGet);
 
 router.post(
   '/',
+  authenticate,
+  adminOnly,
   usernameValidator(body('username')),
   body('password')
     .isString()

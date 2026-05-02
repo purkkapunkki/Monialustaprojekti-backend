@@ -82,6 +82,7 @@ const getUserByUsername = async (
 
 const createUser = async (
   user: Pick<User, 'username' | 'password' | 'email'>,
+  community_id: number,
   userLevelId = 2,
 ): Promise<UserWithNoPasswordAndCommunity> => {
   const sql = `INSERT INTO Users (username, password, email, user_level_id, community_id)
@@ -91,8 +92,7 @@ const createUser = async (
     user.password,
     user.email,
     userLevelId,
-    // TODO: set this to the admin user's community_id
-    1,
+    community_id,
   ]);
   const [result] = await promisePool.execute<ResultSetHeader>(stmt);
 
