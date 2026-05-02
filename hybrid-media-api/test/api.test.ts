@@ -35,8 +35,18 @@ describe('Media API Success Cases', () => {
   let token: string;
   let user: UserWithNoPassword;
   const testUser: Partial<User> = {
-    username: 'Test_User_' + randomstring.generate(7),
-    email: randomstring.generate(9).toLowerCase() + '@user.fi',
+    username:
+      'TestUser' +
+      randomstring.generate({
+        length: 7,
+        charset: 'alphabetic',
+      }),
+    email:
+      randomstring.generate({
+        length: 9,
+        charset: 'alphanumeric',
+        capitalization: 'lowercase',
+      }) + '@user.fi',
     password: 'asdfQEWR1234',
   };
   it('should create a new user', async () => {
@@ -88,7 +98,7 @@ describe('Media API Success Cases', () => {
 
   // test succesful media routes
   it('Should get array of media items', async () => {
-    await getMediaItems(app);
+    await getMediaItems(app, token);
   });
 
   it('Should get media item by id', async () => {
@@ -97,7 +107,7 @@ describe('Media API Success Cases', () => {
   });
 
   it('Should get media items with pagination', async () => {
-    const mediaItems = await getMediaItemsWithPagination(app, 1, 5);
+    const mediaItems = await getMediaItemsWithPagination(app, 1, 5, token);
     expect(mediaItems.length).toBeLessThanOrEqual(5);
   });
 
@@ -127,6 +137,7 @@ describe('Media API Success Cases', () => {
       media_type: testMediaItem.media_type,
       filesize: testMediaItem.filesize,
       user_id: testMediaItem.user_id,
+      community_id: testMediaItem.community_id,
     };
     await putMediaItem(app, testMediaItem.media_id, token, updatedItem);
   });

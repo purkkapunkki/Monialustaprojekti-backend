@@ -29,10 +29,14 @@ const uploadMediaFile = (
   });
 };
 
-const getMediaItems = (url: string | Application): Promise<MediaItem[]> => {
+const getMediaItems = (
+  url: string | Application,
+  token: string,
+): Promise<MediaItem[]> => {
   return new Promise((resolve, reject) => {
     request(url)
       .get('/api/v1/media')
+      .set('Authorization', `Bearer ${token}`)
       .expect(200, (err, response) => {
         if (err) {
           reject(err);
@@ -294,10 +298,12 @@ const getMediaItemsWithPagination = (
   url: string | Application,
   page: number,
   limit: number,
+  token: string,
 ): Promise<MediaItem[]> => {
   return new Promise((resolve, reject) => {
     request(url)
       .get(`/api/v1/media?page=${page}&limit=${limit}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200, (err, response) => {
         if (err) {
           reject(err);
