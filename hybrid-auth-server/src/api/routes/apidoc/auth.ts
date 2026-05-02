@@ -3,8 +3,8 @@
  * @apiName UserLogin
  * @apiGroup Authentication
  *
- * @apiParam {String} username Username of the User.
- * @apiParam {String} password Password of the User.
+ * @apiBody {String} username Username of the User.
+ * @apiBody {String} password Password of the User.
  *
  * @apiParamExample {json} Request-Example:
  *     {

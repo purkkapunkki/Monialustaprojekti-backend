@@ -8,7 +8,7 @@
  * @apiHeader {String} Authorization Bearer token for authentication.
  * @apiHeader Content-Type multipart/form-data
  *
- * @apiParam {File} file The file to be uploaded.
+ * @apiBody {File} file The file to be uploaded.
  *
  * @apiSuccess {String} message Success message.
  *
