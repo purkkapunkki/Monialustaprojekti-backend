@@ -1,6 +1,6 @@
 /* eslint-disable node/no-unpublished-import */
 import app from '../src/app';
-import {UserWithLevel} from 'hybrid-types/DBTypes';
+import {UserWithLevel, UserWithLevelAndCommunity} from 'hybrid-types/DBTypes';
 import {getFound, getNotFound} from './serverFunctions';
 import {
   createUser,
@@ -29,13 +29,23 @@ describe('GET /api/v1', () => {
 
   // test user
   const testuser: Pick<UserWithLevel, 'username' | 'email' | 'password'> = {
-    username: 'testuser' + randomstring.generate(5),
-    email: randomstring.generate(5) + '@test.com',
+    username:
+      'testuser' +
+      randomstring.generate({
+        length: 7,
+        charset: 'alphabetic',
+      }),
+    email:
+      randomstring.generate({
+        length: 7,
+        charset: 'alphanumeric',
+        capitalization: 'lowercase',
+      }) + '@test.com',
     password: 'testpassword',
   };
 
   // create a user
-  let user: UserWithLevel;
+  let user: UserWithLevelAndCommunity;
   it('should create a user', async () => {
     user = await createUser(app, userpath, testuser);
   });
@@ -59,8 +69,18 @@ describe('GET /api/v1', () => {
 
   // test modify user
   const modifieduser: Pick<UserWithLevel, 'username' | 'email'> = {
-    username: 'modifieduser' + randomstring.generate(5),
-    email: randomstring.generate(5) + '@test.com',
+    username:
+      'modifieduser' +
+      randomstring.generate({
+        length: 5,
+        charset: 'alphabetic',
+      }),
+    email:
+      randomstring.generate({
+        length: 5,
+        charset: 'alphanumeric',
+        capitalization: 'lowercase',
+      }) + '@test.com',
   };
   it('should modify a user', async () => {
     console.log('Token', token);

@@ -1,7 +1,7 @@
 /* eslint-disable node/no-unpublished-import */
 import {Express} from 'express';
 import request from 'supertest';
-import {UserWithLevel} from 'hybrid-types/DBTypes';
+import {UserWithLevel, UserWithLevelAndCommunity} from 'hybrid-types/DBTypes';
 import {
   UserResponse,
   LoginResponse,
@@ -12,7 +12,7 @@ const createUser = (
   url: string | Express,
   path: string,
   user: Pick<UserWithLevel, 'username' | 'email' | 'password'>,
-): Promise<UserWithLevel> => {
+): Promise<UserWithLevelAndCommunity> => {
   return new Promise((resolve, reject) => {
     request(url)
       .post(path)
@@ -27,7 +27,7 @@ const createUser = (
           if (!result.user) {
             reject(new Error('User not created'));
           }
-          const userData = result.user as UserWithLevel;
+          const userData = result.user as UserWithLevelAndCommunity;
           expect(userData.user_id).toBeGreaterThan(0);
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBe(user.email);
@@ -129,7 +129,7 @@ const login = (
           if (!result.user) {
             reject(new Error('User not created'));
           }
-          const userData = result.user as UserWithLevel;
+          const userData = result.user;
           expect(userData.user_id).toBeGreaterThan(0);
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBeDefined();
@@ -162,7 +162,7 @@ const modifyUser = (
           if (!result.user) {
             reject(new Error('User not created'));
           }
-          const userData = result.user as UserWithLevel;
+          const userData = result.user;
           expect(userData.user_id).toBeGreaterThan(0);
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBe(user.email);
@@ -186,7 +186,7 @@ const deleteUser = (url: string | Express, path: string, token: string) => {
           const result: UserResponse = response.body;
           expect(result).toHaveProperty('message');
           expect(result).toHaveProperty('user');
-          const userData = result.user as UserWithLevel;
+          const userData = result.user;
           expect(userData.user_id).toBeGreaterThan(0);
           resolve(userData);
         }
